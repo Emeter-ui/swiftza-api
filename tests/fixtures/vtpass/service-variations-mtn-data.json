@@ -1,0 +1,456 @@
+{
+  "response_description": "000",
+  "content": {
+    "ServiceName": "MTN Data",
+    "serviceID": "mtn-data",
+    "convinience_fee": "0 %",
+    "variations": [
+      {
+        "variation_code": "mtn-10mb-100",
+        "name": "N100 100MB - 24 hrs",
+        "variation_amount": "100.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-50mb-200",
+        "name": "N200 200MB - 2 days",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100mb-1000",
+        "name": "N1000 1.5GB - 30 days",
+        "variation_amount": "1000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-500mb-2000",
+        "name": "N2000 4.5GB - 30 days",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-20hrs-1500",
+        "name": "N1500 6GB - 7 days",
+        "variation_amount": "1500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-2500",
+        "name": "N2500 6GB - 30 days",
+        "variation_amount": "2500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-data-3000",
+        "name": "N3000 8GB - 30 days",
+        "variation_amount": "3000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-1gb-3500",
+        "name": "N3500 10GB - 30 days",
+        "variation_amount": "3500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100hr-5000",
+        "name": "N5000 15GB - 30 days",
+        "variation_amount": "5000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-6000",
+        "name": "N6000 20GB - 30 days",
+        "variation_amount": "6000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-40gb-10000",
+        "name": "N10000 40GB - 30 days",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-75gb-15000",
+        "name": "N15000 75GB - 30 days",
+        "variation_amount": "15000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-110gb-20000",
+        "name": "N20000 110GB - 30 days",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-1500",
+        "name": "N1500 3GB - 30 days",
+        "variation_amount": "1500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-25gb-sme-10000",
+        "name": "MTN N10,000 25GB SME Mobile Data ( 1 Month)",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-165gb-sme-50000",
+        "name": "MTN N50,000 165GB SME Mobile Data (2-Months)",
+        "variation_amount": "50000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-360gb-sme-100000",
+        "name": "MTN N100,000 360GB SME Mobile Data (3 Months)",
+        "variation_amount": "100000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-4-5tb-450000",
+        "name": "MTN N450,000 4.5TB Mobile Data (1 Year)",
+        "variation_amount": "450000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-1tb-110000",
+        "name": "MTN N100,000 1TB Mobile Data (1 Year)",
+        "variation_amount": "100000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-2-5gb-600",
+        "name": "MTN N600 2.5GB - 2 days",
+        "variation_amount": "600.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-120gb-22000",
+        "name": "MTN N22000 120GB Monthly Plan + 80mins",
+        "variation_amount": "22000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100gb-20000",
+        "name": "MTN 100GB 2-Month Plan",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-160gb-30000",
+        "name": "MTN N30,000 160GB 2-Month Plan",
+        "variation_amount": "30000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-400gb-50000",
+        "name": "MTN N50,000 400GB 3-Month Plan",
+        "variation_amount": "50000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-600gb-75000",
+        "name": "MTN N75,000 600GB 3-Months Plan",
+        "variation_amount": "75000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-300",
+        "name": "MTN N300 Xtratalk Weekly Bundle",
+        "variation_amount": "300.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-500",
+        "name": "MTN N500 Xtratalk Weekly Bundle",
+        "variation_amount": "500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-1000",
+        "name": "MTN N1000 Xtratalk Monthly Bundle",
+        "variation_amount": "1000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-2000",
+        "name": "MTN N2000 Xtratalk Monthly Bundle",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-5000",
+        "name": "MTN N5000 Xtratalk Monthly Bundle",
+        "variation_amount": "5000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-10000",
+        "name": "MTN N10000 Xtratalk Monthly Bundle",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-15000",
+        "name": "MTN N15000 Xtratalk Monthly Bundle",
+        "variation_amount": "15000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-20000",
+        "name": "MTN N20000 Xtratalk Monthly Bundle",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-800",
+        "name": "MTN N800 3GB - 2 days",
+        "variation_amount": "800.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-7gb-2000",
+        "name": "MTN N2000 7GB - 7 days",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtradata-200",
+        "name": "MTN N200 Xtradata",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-300",
+        "name": "MTN N200 Xtratalk - 3 days",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      }
+    ],
+    "varations": [
+      {
+        "variation_code": "mtn-10mb-100",
+        "name": "N100 100MB - 24 hrs",
+        "variation_amount": "100.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-50mb-200",
+        "name": "N200 200MB - 2 days",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100mb-1000",
+        "name": "N1000 1.5GB - 30 days",
+        "variation_amount": "1000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-500mb-2000",
+        "name": "N2000 4.5GB - 30 days",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-20hrs-1500",
+        "name": "N1500 6GB - 7 days",
+        "variation_amount": "1500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-2500",
+        "name": "N2500 6GB - 30 days",
+        "variation_amount": "2500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-data-3000",
+        "name": "N3000 8GB - 30 days",
+        "variation_amount": "3000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-1gb-3500",
+        "name": "N3500 10GB - 30 days",
+        "variation_amount": "3500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100hr-5000",
+        "name": "N5000 15GB - 30 days",
+        "variation_amount": "5000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-6000",
+        "name": "N6000 20GB - 30 days",
+        "variation_amount": "6000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-40gb-10000",
+        "name": "N10000 40GB - 30 days",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-75gb-15000",
+        "name": "N15000 75GB - 30 days",
+        "variation_amount": "15000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-110gb-20000",
+        "name": "N20000 110GB - 30 days",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-1500",
+        "name": "N1500 3GB - 30 days",
+        "variation_amount": "1500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-25gb-sme-10000",
+        "name": "MTN N10,000 25GB SME Mobile Data ( 1 Month)",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-165gb-sme-50000",
+        "name": "MTN N50,000 165GB SME Mobile Data (2-Months)",
+        "variation_amount": "50000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-360gb-sme-100000",
+        "name": "MTN N100,000 360GB SME Mobile Data (3 Months)",
+        "variation_amount": "100000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-4-5tb-450000",
+        "name": "MTN N450,000 4.5TB Mobile Data (1 Year)",
+        "variation_amount": "450000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-1tb-110000",
+        "name": "MTN N100,000 1TB Mobile Data (1 Year)",
+        "variation_amount": "100000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-2-5gb-600",
+        "name": "MTN N600 2.5GB - 2 days",
+        "variation_amount": "600.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-120gb-22000",
+        "name": "MTN N22000 120GB Monthly Plan + 80mins",
+        "variation_amount": "22000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-100gb-20000",
+        "name": "MTN 100GB 2-Month Plan",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-160gb-30000",
+        "name": "MTN N30,000 160GB 2-Month Plan",
+        "variation_amount": "30000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-400gb-50000",
+        "name": "MTN N50,000 400GB 3-Month Plan",
+        "variation_amount": "50000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-600gb-75000",
+        "name": "MTN N75,000 600GB 3-Months Plan",
+        "variation_amount": "75000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-300",
+        "name": "MTN N300 Xtratalk Weekly Bundle",
+        "variation_amount": "300.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-500",
+        "name": "MTN N500 Xtratalk Weekly Bundle",
+        "variation_amount": "500.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-1000",
+        "name": "MTN N1000 Xtratalk Monthly Bundle",
+        "variation_amount": "1000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-2000",
+        "name": "MTN N2000 Xtratalk Monthly Bundle",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-5000",
+        "name": "MTN N5000 Xtratalk Monthly Bundle",
+        "variation_amount": "5000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-10000",
+        "name": "MTN N10000 Xtratalk Monthly Bundle",
+        "variation_amount": "10000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-15000",
+        "name": "MTN N15000 Xtratalk Monthly Bundle",
+        "variation_amount": "15000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-20000",
+        "name": "MTN N20000 Xtratalk Monthly Bundle",
+        "variation_amount": "20000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-3gb-800",
+        "name": "MTN N800 3GB - 2 days",
+        "variation_amount": "800.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-7gb-2000",
+        "name": "MTN N2000 7GB - 7 days",
+        "variation_amount": "2000.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtradata-200",
+        "name": "MTN N200 Xtradata",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      },
+      {
+        "variation_code": "mtn-xtratalk-300",
+        "name": "MTN N200 Xtratalk - 3 days",
+        "variation_amount": "200.00",
+        "fixedPrice": "Yes"
+      }
+    ]
+  }
+}

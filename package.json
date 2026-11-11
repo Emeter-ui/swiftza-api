@@ -1,0 +1,48 @@
+{
+  "name": "sameaze",
+  "version": "1.0.0",
+  "description": "Recharge Application",
+  "private": true,
+  "scripts": {
+    "start": "pm2-runtime start index.js",
+    "stop": "pm2 stop index.js",
+    "dev": "nodemon index.js",
+    "build": "webpack",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "keywords": [
+    "pythonvdev",
+    "api"
+  ],
+  "author": "Ubaks Sam",
+  "license": "ISC",
+  "bugs": {},
+  "homepage": "https://github.com/pythonvista/pythonvdev#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "firebase": "^9.11.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^6.21.0",
+    "nodemon": "^2.0.20",
+    "pm2": "^5.2.2"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "mongodb-memory-server": "^10.4.3",
+    "supertest": "^7.2.2",
+    "vitest": "^2.1.9"
+  }
+}

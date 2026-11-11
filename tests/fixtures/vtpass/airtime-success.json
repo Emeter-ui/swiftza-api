@@ -1,0 +1,37 @@
+{
+  "code": "000",
+  "content": {
+    "transactions": {
+      "status": "delivered",
+      "product_name": "MTN Airtime VTU",
+      "unique_element": "08011111111",
+      "unit_price": "100",
+      "quantity": 1,
+      "service_verification": null,
+      "channel": "api",
+      "commission": 3.5000000000000004,
+      "total_amount": 96.5,
+      "discount": null,
+      "type": "Airtime Recharge",
+      "email": "sameazydata@gmail.com",
+      "phone": "08101074895",
+      "name": null,
+      "convinience_fee": 0,
+      "amount": "100",
+      "platform": "api",
+      "method": "api",
+      "transactionId": "17889595323640946940300717",
+      "commission_details": {
+        "amount": 3.5000000000000004,
+        "rate": "3.50",
+        "rate_type": "percent",
+        "computation_type": "default"
+      }
+    }
+  },
+  "response_description": "TRANSACTION SUCCESSFUL",
+  "requestId": "202609091412capturemtu4bbn6",
+  "amount": 100,
+  "transaction_date": "2026-09-09T13:12:12.000000Z",
+  "purchased_code": ""
+}

@@ -1,0 +1,50 @@
+{
+  "response_description": "000",
+  "content": [
+    {
+      "serviceID": "airtel",
+      "name": "Airtel Airtime VTU",
+      "minimium_amount": "50",
+      "maximum_amount": "50000",
+      "convinience_fee": "0 %",
+      "product_type": "flexible",
+      "image": "https://sandbox.vtpass.com/resources/products/200X200/Airtel-Airtime-VTU.jpg"
+    },
+    {
+      "serviceID": "mtn",
+      "name": "MTN Airtime VTU",
+      "minimium_amount": "5",
+      "maximum_amount": "200000",
+      "convinience_fee": "0 %",
+      "product_type": "flexible",
+      "image": "https://sandbox.vtpass.com/resources/products/200X200/MTN-Airtime-VTU.jpg"
+    },
+    {
+      "serviceID": "glo",
+      "name": "GLO Airtime VTU",
+      "minimium_amount": "10",
+      "maximum_amount": "100000",
+      "convinience_fee": "0 %",
+      "product_type": "flexible",
+      "image": "https://sandbox.vtpass.com/resources/products/200X200/GLO-Airtime.jpg"
+    },
+    {
+      "serviceID": "etisalat",
+      "name": "9mobile Airtime VTU",
+      "minimium_amount": "5",
+      "maximum_amount": "50000",
+      "convinience_fee": "0 %",
+      "product_type": "flexible",
+      "image": "https://sandbox.vtpass.com/resources/products/200X200/9mobile-Airtime.jpg"
+    },
+    {
+      "serviceID": "foreign-airtime",
+      "name": "International Airtime",
+      "minimium_amount": "1",
+      "maximum_amount": "200000",
+      "convinience_fee": "0 %",
+      "product_type": "flexible",
+      "image": "https://sandbox.vtpass.com/resources/products/200X200/Foreign-Airtime.jpg"
+    }
+  ]
+}

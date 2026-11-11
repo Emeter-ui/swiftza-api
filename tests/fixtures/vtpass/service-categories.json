@@ -1,0 +1,33 @@
+{
+  "response_description": "000",
+  "content": [
+    {
+      "identifier": "airtime",
+      "name": "Airtime Recharge"
+    },
+    {
+      "identifier": "data",
+      "name": "Data Services"
+    },
+    {
+      "identifier": "tv-subscription",
+      "name": "TV Subscription"
+    },
+    {
+      "identifier": "electricity-bill",
+      "name": "Electricity Bill"
+    },
+    {
+      "identifier": "education",
+      "name": "Education"
+    },
+    {
+      "identifier": "other-services",
+      "name": "Other Merchants/Services"
+    },
+    {
+      "identifier": "insurance",
+      "name": "Insurance"
+    }
+  ]
+}
