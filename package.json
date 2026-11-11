@@ -7,7 +7,7 @@
     "start": "pm2-runtime start index.js",
     "stop": "pm2 stop index.js",
     "dev": "nodemon index.js",
-    "build": "webpack",
+    "build": "echo 'No build step required'",
     "test": "vitest run",
     "test:watch": "vitest"
   },
