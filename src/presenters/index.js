@@ -32,11 +32,11 @@ const network = (d) => ({
 
 const dataPlan = (d) => ({
   id: d.docid,
-  network: d.Network ?? null,
+  networkId: d.networkId ?? null,
   type: d.planType ?? null,
   size: d.Size ?? null,
   validity: d.Validity ?? null,
-  amount: parsePrice(d.Amount),
+  price: parsePrice(d.Amount),
   active: isActive(d),
 });
 
