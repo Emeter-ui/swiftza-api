@@ -54,7 +54,15 @@ async function resolveById(collection, idField, value, label) {
   return { doc };
 }
 
-const resolveNetworkById = (id) => resolveById('NETWORKS', 'id', id, 'network');
+async function resolveNetworkById(id) {
+  if (id === undefined || id === null || id === '') {
+    throw validationFailed('network is required');
+  }
+  const doc = await catalogRepo.findById('NETWORKS', id);
+  if (!doc) throw validationFailed('Unknown network', { network: id });
+  if (doc.active === false) throw validationFailed('This network is currently unavailable');
+  return { doc };
+}
 const resolveCableById = (id) => resolveById('CABLES', 'CableID', id, 'cable provider');
 const resolveDiscoById = (id) => resolveById('ELECTRICITY', 'DiscoID', id, 'disco');
 
