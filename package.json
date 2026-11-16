@@ -23,7 +23,7 @@
   "bugs": {},
   "homepage": "https://github.com/pythonvista/pythonvdev#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.0"
   },
   "dependencies": {
     "@sentry/node": "^11.12.0",
