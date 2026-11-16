@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const Sentry = require('@sentry/node');
 
 const config = require('./config/env');
+const logger = require('./services/logger');
 const { notFound, errorHandler, authed, requireAdmin } = require('./middleware');
+const { loginLimiter, signupLimiter, authLimiter } = require('./middleware/rateLimit');
 
 const signupRoute = require('./routes/signup');
 const loginRoute = require('./routes/login');
@@ -36,8 +39,20 @@ const adminProviderCatalogRoute = require('./routes/admin/provider-catalog');
 const adminEarningsRoute = require('./routes/admin/earnings');
 const adminImportRoute = require('./routes/admin/import');
 const adminWaitlistRoute = require('./routes/admin/waitlist');
+const cronRoute = require('./routes/cron');
+
+if (config.optional('SENTRY_DSN', '')) {
+  Sentry.init({ dsn: config.optional('SENTRY_DSN', ''), environment: config.nodeEnv });
+}
 
 const app = express();
+
+// Request logging
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => logger.info({ method: req.method, path: req.path, status: res.statusCode, ms: Date.now() - start }));
+  next();
+});
 
 app.use(
   cors(
@@ -57,9 +72,10 @@ app.get('/', (req, res) => {
 
 // Public: credentials are the entry point, and the installer runs before any
 // account exists. /wenbook is mounted above and authenticates by HMAC instead.
-app.use('/signup', signupRoute);
-app.use('/login', loginRoute);
+app.use('/signup', signupLimiter, signupRoute);
+app.use('/login',  loginLimiter,  loginRoute);
 app.use('/setup', setupRoute);
+app.use('/cron', cronRoute);
 
 // Anything that spends money or reads a profile. `authed` also rewrites
 // req.body.uid from the session, so the caller cannot act as another user.
@@ -74,7 +90,7 @@ app.use('/atc', authed, atcRoute);
 
 // Mixed — these mount their own per-endpoint guards.
 app.use('/store', storeRoute);
-app.use('/auth', authRoute);
+app.use('/auth', authLimiter, authRoute);
 
 // --- New customer contract (samzeenuxt). Runs alongside the legacy routes
 // above until samzeedatas is retired, then those are deleted.

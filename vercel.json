@@ -1,21 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "./index.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "src/**"
-                ],
-                "maxLambdaSize": "50mb"
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
-        }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "./index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**"],
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/" }
+  ],
+  "crons": [
+    { "path": "/cron/sweep-pending", "schedule": "0 * * * *" }
+  ]
 }

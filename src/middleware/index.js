@@ -1,5 +1,7 @@
 const { AppError } = require('../models/errors');
 const { nodeEnv } = require('../config/env');
+const Sentry = require('@sentry/node');
+const logger = require('../services/logger');
 
 // Forwards rejected promises to the error handler. Without this an async route
 // that throws leaves the request hanging until the client times out.
@@ -22,9 +24,8 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  // Previously routes returned the raw error object, leaking Firebase internals
-  // and stack traces to the client.
-  console.error(`[error] ${req.method} ${req.originalUrl}:`, err);
+  logger.error({ method: req.method, path: req.originalUrl, err: err.message }, 'Unhandled error');
+  Sentry.captureException(err);
 
   res.status(500).json({
     status: 'error',

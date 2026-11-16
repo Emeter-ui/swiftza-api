@@ -3,6 +3,7 @@ const { auth } = require('./firebase');
 
 const {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
@@ -21,6 +22,7 @@ function AuthFunc() {
   this.reset = (email) => sendPasswordResetEmail(auth, email);
   this.verifycode = (code) => verifyPasswordResetCode(auth, code);
   this.confirmreset = (code, newpassword) => confirmPasswordReset(auth, code, newpassword);
+  this.sendVerification = (user) => sendEmailVerification(user);
   this.changeEmail = (email, curruser) => updateEmail(curruser, email);
   this.changePassword = (password, curruser) => updatePassword(curruser, password);
 }

@@ -43,7 +43,13 @@ router.post(
       bonusBalance: 0,
     });
 
-    res.status(201).json({ status: 'success', msg: 'User account created' });
+    // Best-effort — never fails the signup if the email cannot be sent.
+    authfunc.sendVerification(credential.user).catch(() => {});
+
+    res.status(201).json({
+      status: 'success',
+      msg: 'Account created. Check your inbox to verify your email before logging in.',
+    });
   })
 );
 

@@ -20,6 +20,8 @@ const SECRETS = [
   'FIREBASE_PROJECT_ID',
   'FIREBASE_STORAGE_BUCKET',
   'FIREBASE_MESSAGING_SENDER_ID',
+  'FIREBASE_ADMIN_CLIENT_EMAIL',
+  'FIREBASE_ADMIN_PRIVATE_KEY',
 ];
 
 const missing = SECRETS.filter((name) => !process.env[name]);
@@ -48,6 +50,16 @@ function optional(name, fallback) {
 function optionalInt(name, fallback) {
   const parsed = parseInt(process.env[name], 10);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+const isProduction = (process.env.NODE_ENV || 'development') === 'production';
+if (isProduction) {
+  if (!process.env.CORS_ORIGINS) {
+    throw new Error('[config] CORS_ORIGINS must be set in production to prevent open CORS.');
+  }
+  if ((process.env.JWT_SECRET || '').length < 32) {
+    throw new Error('[config] JWT_SECRET must be at least 32 characters in production.');
+  }
 }
 
 module.exports = {

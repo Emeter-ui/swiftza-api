@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { auth } = require('../services/firebase');
 const { authfunc } = require('../services/index');
-const { asyncHandler, requireAuth } = require('../middleware');
+const { getAdminAuth } = require('../services/firebase-admin');
+const { asyncHandler, requireAuth, signSession } = require('../middleware');
 const { validationFailed, AppError } = require('../models/errors');
+const users = require('../repositories/users');
+const P = require('../presenters');
 
 // HAZARD: these handlers sign in against the process-wide Firebase client auth
 // instance, so `auth.currentUser` is shared across concurrent requests and two
@@ -113,6 +116,67 @@ router.post(
       throw new AppError('INVALID_CODE', 'This reset code is invalid or expired', 400);
     }
     res.json({ status: 'success', msg: 'Password reset successful' });
+  })
+);
+
+router.post(
+  '/resend-verification',
+  asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) throw validationFailed('Email and password are required');
+    let credential;
+    try {
+      credential = await authfunc.login(email, password);
+    } catch {
+      // Always return the same message so the endpoint cannot be used to discover accounts.
+      res.json({ status: 'success', msg: 'If your credentials are correct, a verification email has been sent.' });
+      return;
+    }
+    try {
+      await authfunc.sendVerification(credential.user);
+    } catch {
+      // Best-effort — swallow send errors.
+    } finally {
+      await authfunc.signout().catch(() => {});
+    }
+    res.json({ status: 'success', msg: 'If your credentials are correct, a verification email has been sent.' });
+  })
+);
+
+router.post(
+  '/google',
+  asyncHandler(async (req, res) => {
+    const { idToken } = req.body;
+    if (!idToken) throw validationFailed('idToken is required');
+
+    let decoded;
+    try {
+      decoded = await getAdminAuth().verifyIdToken(idToken);
+    } catch {
+      throw new AppError('INVALID_TOKEN', 'Google sign-in failed. Please try again.', 401);
+    }
+
+    const { uid, email, name } = decoded;
+    let user = await users.findByUid(uid);
+    if (!user) {
+      await users.create(uid, {
+        email,
+        fullname: name || '',
+        userId: uid,
+        uniqueId: uid,
+        account: 'USER',
+        balance: 0,
+        bonusBalance: 0,
+      });
+      user = await users.findByUid(uid);
+    }
+
+    res.json({
+      status: 'success',
+      msg: 'Signed in with Google',
+      token: signSession({ uid, account: user.account }),
+      user: P.user(user),
+    });
   })
 );
 
