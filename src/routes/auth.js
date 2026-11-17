@@ -152,7 +152,8 @@ router.post(
     let decoded;
     try {
       decoded = await getAdminAuth().verifyIdToken(idToken);
-    } catch {
+    } catch (e) {
+      console.error('[auth/google] verifyIdToken failed:', e.code, e.message);
       throw new AppError('INVALID_TOKEN', 'Google sign-in failed. Please try again.', 401);
     }
 
