@@ -47,6 +47,10 @@ if (config.optional('SENTRY_DSN', '')) {
 
 const app = express();
 
+// Railway (and most PaaS platforms) sit behind a load balancer that sets
+// X-Forwarded-For. Without this, express-rate-limit can't identify clients.
+app.set('trust proxy', 1);
+
 // Request logging
 app.use((req, res, next) => {
   const start = Date.now();
