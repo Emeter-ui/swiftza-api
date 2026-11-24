@@ -72,10 +72,22 @@ router.post(
 router.post(
   '/resetmail',
   asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const email = String(req.body?.email || '').trim().toLowerCase();
     if (!email) throw validationFailed('Email is required');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw validationFailed('Enter a valid email address');
 
-    await authfunc.reset(email);
+    try {
+      await authfunc.reset(email);
+    } catch (err) {
+      const code = String(err.code || '');
+      if (code === 'auth/invalid-email') throw validationFailed('Enter a valid email address');
+      if (code === 'auth/too-many-requests') {
+        throw new AppError('TOO_MANY_REQUESTS', 'Too many reset requests. Please wait a few minutes and try again.', 429);
+      }
+      // user-not-found (older projects without enumeration protection) falls
+      // through to the same success reply as a real account.
+      if (code !== 'auth/user-not-found') throw err;
+    }
     // Always the same response so the endpoint cannot be used to discover which
     // email addresses have accounts.
     res.json({
