@@ -4,8 +4,55 @@ const { asyncHandler, authed } = require('../middleware');
 const { finance } = require('../models/finance');
 const { request, OK } = require('../models/http');
 const { paystack } = require('../config/env');
-const { paystackReference } = require('../models/reference');
+const funding = require('../models/funding');
+const fees = require('../models/fees');
+const feeRepo = require('../repositories/fees');
+const users = require('../repositories/users');
 const { validationFailed, providerUnavailable, paymentNotSuccessful } = require('../models/errors');
+
+// What the Add Money screen needs before the customer types anything: the
+// limits, and whether a fee applies at all. The rules themselves stay
+// server-side; the screen asks for a quote per amount.
+router.get(
+  '/fund-wallet/config',
+  authed,
+  asyncHandler(async (req, res) => {
+    const { settings, rules } = await feeRepo.load();
+    res.json({
+      minDeposit: settings.minDeposit,
+      maxDeposit: settings.maxDeposit,
+      feesEnabled: settings.enabled && rules.some((r) => r.active !== false),
+      methods: fees.METHODS.filter((m) => m !== 'any'),
+    });
+  })
+);
+
+router.post(
+  '/fund-wallet/quote',
+  authed,
+  asyncHandler(async (req, res) => {
+    const config = await feeRepo.load();
+    res.json({ quote: fees.quote(config, { amount: req.body.amount, method: req.body.method || 'card' }) });
+  })
+);
+
+// Creates the server-side reference the Paystack popup must use. The client
+// is told the exact kobo amount to charge; it does not compute fees itself.
+router.post(
+  '/fund-wallet/initialize',
+  authed,
+  asyncHandler(async (req, res) => {
+    const { uid } = req.body;
+    const user = await users.findByUid(uid);
+    const { reference, quote } = await funding.initialize({
+      uid,
+      email: user?.email ?? null,
+      amount: req.body.amount,
+      method: req.body.method || 'card',
+    });
+    res.json({ reference, quote, chargeKobo: quote.chargeKobo, email: user?.email ?? null });
+  })
+);
 
 router.post(
   '/fund-wallet/verify',
@@ -27,8 +74,6 @@ router.post(
 
     const data = verification.body?.data;
     if (!data || data.status !== 'success') {
-      // Routed through errorHandler like every other error path, instead of a
-      // bare {message} that skips the {status, code, msg} envelope.
       throw paymentNotSuccessful();
     }
 
@@ -37,26 +82,16 @@ router.post(
       throw validationFailed('Payment is missing required account details');
     }
 
-    // The uid comes from the session, not the payment metadata, and the credit
-    // key is namespaced so it cannot collide with a purchase reference. The
-    // legacy /fundwallet route and the /wenbook webhook must derive the same
-    // _id from the Paystack reference or the idempotency guard cannot see
-    // across them.
-    const outcome = await finance.creditWallet({
-      uid,
-      amount,
-      transref: paystackReference(data.reference),
-      meta: {
-        email: data.metadata?.email ?? null,
-        channel: 'Wallet',
-        paychannel: data.channel ?? null,
-        paidAt: data.paidAt ?? data.paid_at ?? null,
-        source: 'verify-v2',
-      },
-    });
+    // The uid comes from the session; a funding intent created for another
+    // account is refused. The credit amount comes from the fee engine, and
+    // the transref is derived the same way by the webhook and the legacy
+    // /fundwallet route so the idempotency guard sees across all three.
+    const outcome = await funding.creditFromPaystack({ data, sessionUid: uid, source: 'verify-v2' });
 
     res.json({
       wallet: await finance.getBalance(uid),
+      credited: outcome.credit,
+      fee: outcome.breakdown.totalFee,
       message: outcome.changed
         ? 'Wallet funded successfully'
         : 'This payment has already been credited',

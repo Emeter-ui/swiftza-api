@@ -51,10 +51,8 @@ router.post(
       throw err;
     }
 
-    if (!credential.user.emailVerified) {
-      await authfunc.signout().catch(() => {});
-      throw new AppError('EMAIL_NOT_VERIFIED', 'Please verify your email before logging in.', 403);
-    }
+    // Email verification is intentionally NOT required: a correct email/username
+    // and password is enough to log in (owner's decision, 2026-11-24).
 
     const { uid } = credential.user;
     const user = await users.findByUid(uid);

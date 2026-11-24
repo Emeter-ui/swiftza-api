@@ -24,6 +24,12 @@ const SECRETS = [
   'FIREBASE_ADMIN_PRIVATE_KEY',
 ];
 
+// Optional: the assistant reports itself unavailable when neither is set.
+const AI_KEYS = ['OPENROUTER_API_KEY', 'GEMINI_API_KEY'];
+if (!AI_KEYS.some((k) => process.env[k])) {
+  console.warn('[config] no AI key set (OPENROUTER_API_KEY / GEMINI_API_KEY); Swiftza AI will be unavailable.');
+}
+
 const missing = SECRETS.filter((name) => !process.env[name]);
 if (missing.length) {
   console.warn(

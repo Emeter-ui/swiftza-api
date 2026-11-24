@@ -35,6 +35,8 @@ const INDEXES = {
     { key: { targetUid: 1, CreatedAt: -1 } },
     { key: { CreatedAt: -1 } },
   ],
+  AILOGS: [{ key: { uid: 1, CreatedAt: -1 } }, { key: { CreatedAt: -1 } }],
+  FUNDINGINTENTS: [{ key: { uid: 1, CreatedAt: -1 } }, { key: { status: 1, CreatedAt: -1 } }],
   DATAPACKS: [{ key: { dataId: 1 } }],
   CABLESPLAN: [{ key: { CableplanID: 1 } }],
   EPIN: [{ key: { examName: 1 } }],

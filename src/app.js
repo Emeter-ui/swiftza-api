@@ -39,7 +39,11 @@ const adminProviderCatalogRoute = require('./routes/admin/provider-catalog');
 const adminEarningsRoute = require('./routes/admin/earnings');
 const adminImportRoute = require('./routes/admin/import');
 const adminWaitlistRoute = require('./routes/admin/waitlist');
+const adminFeesRoute = require('./routes/admin/fees');
+const adminAiRoute = require('./routes/admin/ai');
+const aiRoute = require('./routes/ai');
 const cronRoute = require('./routes/cron');
+const otpRoute  = require('./routes/otp');
 
 if (config.optional('SENTRY_DSN', '')) {
   Sentry.init({ dsn: config.optional('SENTRY_DSN', ''), environment: config.nodeEnv });
@@ -78,6 +82,7 @@ app.get('/', (req, res) => {
 // account exists. /wenbook is mounted above and authenticates by HMAC instead.
 app.use('/signup', signupLimiter, signupRoute);
 app.use('/login',  loginLimiter,  loginRoute);
+app.use('/otp',    authLimiter,   otpRoute);
 app.use('/setup', setupRoute);
 app.use('/cron', cronRoute);
 
@@ -104,6 +109,7 @@ app.use('/', purchasesRoute);
 app.use('/', ordersRoute);
 app.use('/', walletRoute);
 app.use('/', profileRoute);
+app.use('/', aiRoute);
 
 // --- Admin. requireAdmin re-reads the role from the database rather than
 // trusting the JWT claim, so revoking an admin takes effect immediately.
@@ -118,6 +124,8 @@ app.use('/admin', requireAdmin, adminProviderCatalogRoute);
 app.use('/admin', requireAdmin, adminEarningsRoute);
 app.use('/admin', requireAdmin, adminImportRoute);
 app.use('/admin', requireAdmin, adminWaitlistRoute);
+app.use('/admin', requireAdmin, adminFeesRoute);
+app.use('/admin', requireAdmin, adminAiRoute);
 
 app.use(notFound);
 app.use(errorHandler);

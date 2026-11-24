@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const { finance } = require('../models/finance');
+const funding = require('../models/funding');
 const { paystack } = require('../config/env');
-const { paystackReference } = require('../models/reference');
 
 // Paystack signs the exact bytes it sent. The previous version hashed
 // JSON.stringify(req.body), which re-serialises the parsed object and can
@@ -46,34 +45,19 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    const uid = event.data?.metadata?.id;
     const transref = event.data?.reference;
     const amount = Number(event.data?.amount) / 100;
 
-    if (!uid || !transref || !Number.isFinite(amount) || amount <= 0) {
-      console.error('[webhook] malformed charge event', { uid, transref, amount });
+    if (!transref || !Number.isFinite(amount) || amount <= 0) {
+      console.error('[webhook] malformed charge event', { transref, amount });
       return;
     }
 
-    // Idempotent on transref, and the new balance is derived from the current
-    // stored balance inside a transaction rather than from the stale value
-    // Paystack captured in metadata at checkout time. Namespaced so this
-    // shares the idempotency key with the legacy /fundwallet and new
-    // /fund-wallet/verify routes — all three credit writers must derive the
-    // same _id from the Paystack reference or the idempotency guard cannot
-    // see across them.
-    const outcome = await finance.creditWallet({
-      uid,
-      amount,
-      transref: paystackReference(transref),
-      meta: {
-        email: event.data?.metadata?.email ?? null,
-        channel: 'Wallet',
-        paychannel: event.data?.channel ?? null,
-        paidAt: event.data?.paid_at ?? null,
-        source: 'webhook',
-      },
-    });
+    // The owner comes from the server-side funding intent when there is one
+    // (the inline popup does not send metadata.id), falling back to metadata
+    // for payments started by older clients. The credit amount comes from the
+    // fee engine; the idempotency key is shared with both verify routes.
+    const outcome = await funding.creditFromPaystack({ data: event.data, sessionUid: null, source: 'webhook' });
 
     if (!outcome.changed) {
       console.log(`[webhook] ${transref} already credited, ignoring replay`);

@@ -48,7 +48,7 @@ router.post(
 
     res.status(201).json({
       status: 'success',
-      msg: 'Account created. Check your inbox to verify your email before logging in.',
+      msg: 'Account created. You can now log in.',
     });
   })
 );
