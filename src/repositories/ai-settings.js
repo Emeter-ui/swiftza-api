@@ -11,7 +11,7 @@ const DEFAULTS = Object.freeze({
   primaryProvider: 'openrouter',
   openrouterModel: 'google/gemini-2.5-flash',
   openrouterFallbackModels: ['openai/gpt-4o-mini'],
-  geminiModel: 'gemini-2.5-flash',
+  geminiModel: 'gemini-flash-latest',
   useGeminiFallback: true,
   temperature: 0.3,
   maxOutputTokens: 900,

@@ -8,6 +8,7 @@ const config = require('../config/env');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_LATEST = 'gemini-flash-latest';
 
 const keys = {
   openrouter: () => config.optional('OPENROUTER_API_KEY', ''),
@@ -70,7 +71,7 @@ async function openrouter({ system, messages, settings, json }) {
 async function gemini({ system, messages, settings, json }) {
   const key = keys.gemini();
   if (!key) throw new LlmError('gemini', 'not configured');
-  const model = settings.geminiModel;
+  let model = settings.geminiModel || GEMINI_LATEST;
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
@@ -80,12 +81,20 @@ async function gemini({ system, messages, settings, json }) {
       ...(json ? { responseMimeType: 'application/json' } : {}),
     },
   };
-  const res = await request(`${GEMINI_BASE}/${encodeURIComponent(model)}:generateContent`, {
+  const call = (m) => request(`${GEMINI_BASE}/${encodeURIComponent(m)}:generateContent`, {
     method: 'POST',
     headers: { 'x-goog-api-key': key },
     body,
     timeoutMs: settings.requestTimeoutMs,
   });
+  let res = await call(model);
+  // Google retires models (and closes old ones to new accounts) with a 404.
+  // Retry once on the always-current alias so a stale admin setting doesn't
+  // take the fallback provider down.
+  if (res.outcome !== OK && res.httpStatus === 404 && model !== GEMINI_LATEST) {
+    model = GEMINI_LATEST;
+    res = await call(model);
+  }
   if (res.outcome !== OK) throw new LlmError('gemini', upstreamMessage(res), res.body);
   const cand = res.body?.candidates?.[0];
   const text = (cand?.content?.parts || []).map((p) => p.text || '').join('');
