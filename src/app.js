@@ -43,6 +43,9 @@ const adminFeesRoute = require('./routes/admin/fees');
 const adminAiRoute = require('./routes/admin/ai');
 const aiRoute = require('./routes/ai');
 const cronRoute = require('./routes/cron');
+const notificationsRoute = require('./routes/notifications');
+const pinRoute = require('./routes/pin');
+const { requirePin } = require('./middleware/pin');
 const otpRoute  = require('./routes/otp');
 
 if (config.optional('SENTRY_DSN', '')) {
@@ -90,10 +93,10 @@ app.use('/cron', cronRoute);
 // req.body.uid from the session, so the caller cannot act as another user.
 app.use('/userData', authed, userDataRoute);
 app.use('/electricity', authed, electricRoute);
-app.use('/buyepin', authed, buyepinRoute);
+app.use('/buyepin', authed, requirePin, buyepinRoute);
 app.use('/fundwallet', authed, fundRoute);
-app.use('/airtime', authed, airtimeRoute);
-app.use('/data', authed, dataRoute);
+app.use('/airtime', authed, requirePin, airtimeRoute);
+app.use('/data', authed, requirePin, dataRoute);
 app.use('/cables', authed, cablesRoute);
 app.use('/atc', authed, atcRoute);
 
@@ -110,6 +113,8 @@ app.use('/', ordersRoute);
 app.use('/', walletRoute);
 app.use('/', profileRoute);
 app.use('/', aiRoute);
+app.use('/', pinRoute);
+app.use('/', notificationsRoute);
 
 // --- Admin. requireAdmin re-reads the role from the database rather than
 // trusting the JWT claim, so revoking an admin takes effect immediately.

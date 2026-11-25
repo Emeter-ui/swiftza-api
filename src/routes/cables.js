@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { asyncHandler } = require('../middleware');
+const { requirePin } = require('../middleware/pin');
 const { execute } = require('../models/purchase');
 const { getCablePlan } = require('../models/catalog');
 const { resolveCable, resolveCableById } = require('../models/resolve');
@@ -34,6 +35,7 @@ router.get(
 
 router.post(
   '/buy',
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, transref, channel, createdAt, cableID, cablePlanId, iuc } =
       req.body;

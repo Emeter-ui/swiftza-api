@@ -1,26 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../services/firebase');
 const { authfunc } = require('../services/index');
 const { getAdminAuth } = require('../services/firebase-admin');
 const { asyncHandler, requireAuth, signSession } = require('../middleware');
 const { validationFailed, AppError } = require('../models/errors');
 const users = require('../repositories/users');
+const { notify } = require('../models/notifications');
 const P = require('../presenters');
 
-// HAZARD: these handlers sign in against the process-wide Firebase client auth
-// instance, so `auth.currentUser` is shared across concurrent requests and two
-// simultaneous changes can be applied to the wrong account. Migrating to
-// firebase-admin removes the shared-state problem entirely.
-async function reauthenticate(email, password) {
+// The user object comes from this request's own sign-in, never from the shared
+// `auth.currentUser`, which a concurrent request may have replaced. The account
+// must also be the one that owns the session.
+async function reauthenticate(email, password, uid) {
   if (!email || !password) {
     throw validationFailed('Email and current password are required');
   }
+  let user = null;
   try {
-    return await authfunc.login(email, password);
-  } catch {
+    ({ user } = await authfunc.login(email, password));
+  } catch { /* rejected below */ }
+  if (!user || user.uid !== uid) {
     throw new AppError('INVALID_CREDENTIALS', 'Current password is incorrect', 401);
   }
+  return user;
 }
 
 router.post(
@@ -33,8 +35,7 @@ router.post(
       throw validationFailed('Enter a valid new email address');
     }
 
-    await reauthenticate(oldEmail, passwd);
-    const user = auth.currentUser;
+    const user = await reauthenticate(oldEmail, passwd, req.user.uid);
 
     try {
       await authfunc.changeEmail(newEmail, user);
@@ -55,13 +56,13 @@ router.post(
       throw validationFailed('New password must be at least 6 characters');
     }
 
-    await reauthenticate(email, oldpassword);
-    const user = auth.currentUser;
+    const user = await reauthenticate(email, oldpassword, req.user.uid);
 
     try {
       // Firebase Auth is the credential store; the previous version also wrote
       // the new password to the USERS document in plaintext.
       await authfunc.changePassword(newpassword, user);
+      await notify(req.user.uid, { title: 'Password changed', body: "Your password was changed. If this wasn't you, contact support." });
       res.json({ status: 'success', msg: 'Password changed successfully' });
     } finally {
       await authfunc.signout().catch(() => {});

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { asyncHandler } = require('../middleware');
+const { requirePin } = require('../middleware/pin');
 const { execute } = require('../models/purchase');
 const { validateElectricityAmount } = require('../models/catalog');
 const { resolveDisco, resolveDiscoById } = require('../models/resolve');
@@ -37,6 +38,7 @@ router.get(
 
 router.post(
   '/buy',
+  requirePin,
   asyncHandler(async (req, res) => {
     const {
       uid,

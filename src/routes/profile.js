@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const users = require('../repositories/users');
 const { authfunc } = require('../services/index');
-const { auth } = require('../services/firebase');
+const { notify } = require('../models/notifications');
 const P = require('../presenters');
 const { asyncHandler, authed, requireAuth } = require('../middleware');
 const { validationFailed, AppError, userNotFound } = require('../models/errors');
@@ -46,6 +46,7 @@ router.post(
     await users.update(req.user.uid, patch);
     const updated = await users.findByUid(req.user.uid);
 
+    await notify(req.user.uid, { title: 'Profile updated', body: 'Your account details were updated.', type: 'account' });
     res.json({ user: P.user(updated), message: 'Account details updated' });
   })
 );
@@ -66,18 +67,18 @@ router.post(
     const account = await users.findByUid(req.user.uid);
     if (!account) throw userNotFound(req.user.uid);
 
+    let user;
     try {
-      await authfunc.login(account.email, currentPassword);
+      ({ user } = await authfunc.login(account.email, currentPassword));
     } catch {
       throw new AppError('INVALID_CREDENTIALS', 'Current password is incorrect', 401);
     }
 
     try {
-      // HAZARD, inherited from routes/auth.js: authfunc signs in against the
-      // process-wide Firebase client instance, so auth.currentUser is shared
-      // across concurrent requests. Out of scope here — tracked for the phase
-      // that migrates off the Firebase client SDK.
-      await authfunc.changePassword(newPassword, auth.currentUser);
+      // This request's own user object, not the shared auth.currentUser, so two
+      // simultaneous changes cannot land on each other's account.
+      await authfunc.changePassword(newPassword, user);
+      await notify(req.user.uid, { title: 'Password changed', body: "Your password was changed. If this wasn't you, contact support." });
       res.json({ message: 'Password changed successfully' });
     } finally {
       await authfunc.signout().catch(() => {});

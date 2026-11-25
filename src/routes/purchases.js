@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { asyncHandler, authed } = require('../middleware');
+const { requirePin } = require('../middleware/pin');
 const { execute } = require('../models/purchase');
 const { getDataPlan, cablePlanFrom, getEpin, validateAirtimeAmount, validateElectricityAmount } = require('../models/catalog');
 const { resolveNetwork, resolveCable, resolveDisco } = require('../models/resolve');
@@ -54,6 +55,7 @@ function toPinStrings(raw) {
 router.post(
   '/buy-data',
   authed,
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, planId, network, phone } = req.body;
     const mobile = requirePhone(phone);
@@ -90,6 +92,7 @@ router.post(
 router.post(
   '/buy-airtime',
   authed,
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, network, amount, phone } = req.body;
     const mobile = requirePhone(phone);
@@ -126,6 +129,7 @@ router.post(
 router.post(
   '/buy-cable',
   authed,
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, provider: providerName, planId, smartcard } = req.body;
     if (!smartcard) throw validationFailed('Smart card number is required');
@@ -161,6 +165,7 @@ router.post(
 router.post(
   '/buy-electricity',
   authed,
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, disco, meterType, meter, amount, phone } = req.body;
     if (!meter) throw validationFailed('Meter number is required');
@@ -203,6 +208,7 @@ router.post(
 router.post(
   '/result-checker',
   authed,
+  requirePin,
   asyncHandler(async (req, res) => {
     const { uid, examId, quantity } = req.body;
 
