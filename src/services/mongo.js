@@ -4,7 +4,8 @@ const { MongoClient } = require('mongodb');
 // idempotent — re-running it on every boot costs nothing and guarantees a
 // fresh environment is correctly indexed without a separate deploy step.
 const INDEXES = {
-  USERS: [{ key: { account: 1, setUpProcess: 1 } }],
+  // referralCode: unique, so two customers can never share a code.
+  USERS: [{ key: { account: 1, setUpProcess: 1 } }, { key: { referralCode: 1 }, unique: true, sparse: true }, { key: { referredBy: 1, CreatedAt: -1 } }],
   TRANSACTIONS: [
     { key: { uid: 1, CreatedAt: -1 } },
     { key: { CreatedAt: -1 } },
@@ -35,7 +36,9 @@ const INDEXES = {
     { key: { targetUid: 1, CreatedAt: -1 } },
     { key: { CreatedAt: -1 } },
   ],
-  AILOGS: [{ key: { uid: 1, CreatedAt: -1 } }, { key: { CreatedAt: -1 } }],
+  // visitor/ip: hourly limits for people chatting without an account.
+  AILOGS: [{ key: { uid: 1, CreatedAt: -1 } }, { key: { CreatedAt: -1 } }, { key: { visitor: 1, CreatedAt: -1 } }, { key: { ip: 1, CreatedAt: -1 } }],
+  GUESTORDERS: [{ key: { status: 1, createdAt: -1 } }, { key: { 'guest.email': 1, createdAt: -1 } }, { key: { purchaseRef: 1 } }, { key: { createdAt: -1 } }],
   FUNDINGINTENTS: [{ key: { uid: 1, CreatedAt: -1 } }, { key: { status: 1, CreatedAt: -1 } }],
   DATAPACKS: [{ key: { dataId: 1 } }],
   CABLESPLAN: [{ key: { CableplanID: 1 } }],

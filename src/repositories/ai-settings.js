@@ -20,6 +20,22 @@ const DEFAULTS = Object.freeze({
   transactionsInContext: 30,
   maxMessageChars: 1000,
   rateLimitPerHour: 40,
+  // At or below this wallet balance (naira) the assistant only offers a top-up.
+  lowBalanceThreshold: 100,
+  // Signed-out visitors (the public /ai page). They can ask about prices,
+  // fees and the app; anything on an account goes through the sign-in card.
+  guestEnabled: true,
+  guestGreeting: "Hi 👋 I'm Swiftza AI. Ask me about prices and fees, or sign in and I'll pay your bills right here in the chat.",
+  guestSuggestions: ['How much is MTN 1GB?', 'What is the fee to add ₦5,000?', 'Create an account', 'Log in'],
+  // Per browser, and per network address (shared by everyone behind one
+  // mobile carrier gateway, hence higher).
+  guestRateLimitPerHour: 15,
+  guestIpRateLimitPerHour: 60,
+  // Guest quick buy: pay one bill by card with no account. Capped, because
+  // card payments without an account are what card fraud looks for.
+  guestQuickBuyEnabled: true,
+  guestMaxOrder: 20000,
+  guestDailyLimitPerEmail: 50000,
   allowActions: true,
   actionGroups: [...GROUPS],
   refusalMessage: 'I can only help with your Swiftza account: payments, bills, top-ups, transactions and how the app works.',

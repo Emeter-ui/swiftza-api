@@ -47,6 +47,10 @@ const notificationsRoute = require('./routes/notifications');
 const pinRoute = require('./routes/pin');
 const { requirePin } = require('./middleware/pin');
 const otpRoute  = require('./routes/otp');
+const guestRoute = require('./routes/guest');
+const referralsRoute = require('./routes/referrals');
+const adminReferralsRoute = require('./routes/admin/referrals');
+const adminGuestOrdersRoute = require('./routes/admin/guest-orders');
 
 if (config.optional('SENTRY_DSN', '')) {
   Sentry.init({ dsn: config.optional('SENTRY_DSN', ''), environment: config.nodeEnv });
@@ -74,6 +78,11 @@ app.use(
 // The Paystack webhook needs the unparsed body to verify its signature, so it
 // is mounted before the JSON parser.
 app.use('/wenbook', express.raw({ type: '*/*' }), wenbookRoute);
+
+// Voice notes are the one JSON body larger than 100 KB (base64 audio, capped
+// at 1 MB decoded inside the route). Parsed here so the global limit below
+// leaves the already-parsed body alone.
+app.use('/ai/transcribe', express.json({ limit: '1500kb' }));
 
 app.use(bodyParser.json({ limit: '100kb' }));
 
@@ -113,6 +122,9 @@ app.use('/', ordersRoute);
 app.use('/', walletRoute);
 app.use('/', profileRoute);
 app.use('/', aiRoute);
+// Guest quick buy: public, rate limited per address inside the router.
+app.use('/', guestRoute);
+app.use('/', referralsRoute);
 app.use('/', pinRoute);
 app.use('/', notificationsRoute);
 
@@ -131,6 +143,8 @@ app.use('/admin', requireAdmin, adminImportRoute);
 app.use('/admin', requireAdmin, adminWaitlistRoute);
 app.use('/admin', requireAdmin, adminFeesRoute);
 app.use('/admin', requireAdmin, adminAiRoute);
+app.use('/admin', requireAdmin, adminGuestOrdersRoute);
+app.use('/admin', requireAdmin, adminReferralsRoute);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -4,6 +4,7 @@ const feeRepo = require('../repositories/fees');
 const fees = require('../models/fees');
 const P = require('../presenters');
 const { parsePrice } = require('../models/catalog');
+const referrals = require('../models/referrals');
 
 // Everything the assistant knows about this user and this system, gathered
 // fresh per message. Figures the model might get wrong (sums, counts, date
@@ -40,7 +41,7 @@ const REF_PATTERN = /\b(pur_[a-f0-9]{8,}|ps_[A-Za-z0-9_-]{4,}|adj_[a-f0-9]{8,}|a
 function walletLine(w) {
   const kind = {
     credit: 'Wallet top-up', 'credit-reversal': 'Refund', 'admin-credit': 'Credit by Swiftza staff',
-    'admin-debit': 'Debit by Swiftza staff', 'atc-credit': 'Airtime-to-cash payout', debit: 'Purchase payment',
+    'admin-debit': 'Debit by Swiftza staff', 'atc-credit': 'Airtime-to-cash payout', 'referral-credit': 'Referral reward', debit: 'Purchase payment',
   }[w.mode] || w.mode || 'Wallet entry';
   const sign = P.CREDIT_MODES.includes(w.mode) ? '+' : '-';
   const fee = w.totalFee ? ` | paid ${naira(w.grossPaid)} incl. fee ${naira(w.totalFee)}` : '';
@@ -129,12 +130,18 @@ async function lookupReferences(uid, text) {
   return out;
 }
 
-async function catalogBlock() {
+// Raw rows, loaded once per message: the prompt's CATALOG block and the
+// widget validator (ai/widgets.js) must see the same data.
+async function loadCatalog() {
   const safe = (p) => p.catch(() => []);
   const [networks, plans, cables, cablePlans, discos, exams] = await Promise.all([
     safe(catalogRepo.list('NETWORKS')), safe(catalogRepo.list('DATAPACKS')), safe(catalogRepo.list('CABLES')),
     safe(catalogRepo.list('CABLESPLAN')), safe(catalogRepo.list('ELECTRICITY')), safe(catalogRepo.list('EPIN')),
   ]);
+  return { networks, plans, cables, cablePlans, discos, exams };
+}
+
+function catalogBlock({ networks, plans, cables, cablePlans, discos, exams }) {
   const active = (d) => d.active !== false;
   const netName = new Map(networks.map((n) => [String(n.docid), n.name]));
   const lines = [];
@@ -196,9 +203,12 @@ async function quotesForMessage(text) {
 async function build({ uid, message, settings, now = new Date() }) {
   const user = await collection('USERS').findOne({ _id: String(uid) });
   const timeline = await userTimeline(uid, { limit: settings.transactionsInContext, now });
-  const [refs, catalog, feeText, quotes] = await Promise.all([
-    lookupReferences(uid, message), catalogBlock(), feesBlock(), quotesForMessage(message),
+  const [refs, catalogRows, feeText, quotes] = await Promise.all([
+    lookupReferences(uid, message), loadCatalog(), feesBlock(), quotesForMessage(message),
   ]);
+  const catalog = catalogBlock(catalogRows);
+  const refSettings = await referrals.loadSettings();
+  const referredCount = refSettings.enabled ? await collection('USERS').countDocuments({ referredBy: String(uid) }) : 0;
 
   const name = user?.fullname || user?.username || 'Customer';
   const s = timeline.summary;
@@ -218,6 +228,9 @@ async function build({ uid, message, settings, now = new Date() }) {
     `PURCHASES (newest first, id = receipt route id):\n${timeline.purchases.map(purchaseLine).join('\n') || 'none yet'}`,
     `WALLET LEDGER (newest first):\n${timeline.wallet.map(walletLine).join('\n') || 'none yet'}`,
     refs.length ? `REFERENCES THE CUSTOMER MENTIONED:\n${refs.join('\n')}` : '',
+    refSettings.enabled
+      ? `REFERRALS: invite friends from Profile → Invite friends (/dashboard/profile/invite). The customer earns ${naira(refSettings.referrerReward)} per friend who signs up with their code and makes a first purchase of ${naira(refSettings.minQualifyingAmount)} or more${refSettings.refereeReward ? `; the friend gets ${naira(refSettings.refereeReward)} too` : ''}. Rewards go straight to the wallet. This customer has referred ${referredCount} friend(s).`
+      : 'REFERRALS: not available right now.',
     `STATUS MEANINGS:\n${Object.entries(STATUS_MEANING).map(([k, v]) => `  ${k}: ${v}`).join('\n')}`,
     `FUNDING:\n${feeText}`,
     quotes.length ? `EXACT QUOTES FOR AMOUNTS IN THIS MESSAGE:\n  ${quotes.join('\n  ')}` : '',
@@ -227,8 +240,26 @@ async function build({ uid, message, settings, now = new Date() }) {
   return {
     text: sections.join('\n\n'),
     firstName: String(name).split(/\s+/)[0],
+    balance: Number(user?.balance) || 0,
+    phone: user?.phone || null,
+    catalog: catalogRows,
     transactionIds: new Set(timeline.purchases.map((t) => String(t._id))),
   };
 }
 
-module.exports = { build, lookupReferences, quotesForMessage, userTimeline, lagosMonthStart, REF_PATTERN, STATUS_MEANING };
+// A signed-out visitor: public information only. No account is looked up, so
+// nothing personal can reach the model however the visitor phrases things.
+async function buildPublic({ message, now = new Date() }) {
+  const [catalogRows, feeText, quotes] = await Promise.all([loadCatalog(), feesBlock(), quotesForMessage(message)]);
+  const sections = [
+    `NOW: ${stamp(now)} (Lagos time)`,
+    'VISITOR: not signed in. You cannot see any account, balance or transaction.',
+    `STATUS MEANINGS:\n${Object.entries(STATUS_MEANING).map(([k, v]) => `  ${k}: ${v}`).join('\n')}`,
+    `FUNDING:\n${feeText}`,
+    quotes.length ? `EXACT QUOTES FOR AMOUNTS IN THIS MESSAGE:\n  ${quotes.join('\n  ')}` : '',
+    `CATALOG (current prices):\n${catalogBlock(catalogRows)}`,
+  ].filter(Boolean);
+  return { text: sections.join('\n\n'), firstName: null, balance: null, phone: null, catalog: catalogRows, transactionIds: new Set() };
+}
+
+module.exports = { build, buildPublic, loadCatalog, lookupReferences, quotesForMessage, userTimeline, lagosMonthStart, REF_PATTERN, STATUS_MEANING };

@@ -48,6 +48,12 @@ async function initialize({ uid, email, amount, method }) {
 async function resolveCredit({ data, sessionUid = null }) {
   const reference = String(data.reference || '');
   const paidKobo = Math.round(Number(data.amount));
+  // A guest order's payment pays for that order only (models/guest-orders.js).
+  // Without this, a signed-in user could quote a guest's reference to the
+  // verify routes and have it credited to their own wallet.
+  if (reference.startsWith('SWZG-')) {
+    throw new AppError('GUEST_ORDER_PAYMENT', 'This payment belongs to a guest order, not a wallet top-up.', 409);
+  }
   if (!reference || !Number.isFinite(paidKobo) || paidKobo <= 0) {
     throw new AppError('VALIDATION_FAILED', 'Payment is missing required account details', 422);
   }

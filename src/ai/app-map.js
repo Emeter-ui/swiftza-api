@@ -6,6 +6,10 @@
 // nothing.
 //
 // `group` is what the admin toggles on and off under AI settings.
+//
+// `inChat` routes are never offered as links: the assistant handles funding
+// and purchases inside the chat itself (see ai/widgets.js), so it must not
+// send the customer away to those screens.
 
 const ROUTES = [
   // ── Home & wallet ────────────────────────────────────────────────────────
@@ -13,39 +17,39 @@ const ROUTES = [
   { route: '/dashboard/services', group: 'general', title: 'All services', description: 'Grid of every bill and top-up service.' },
   { route: '/dashboard/wallet', group: 'wallet', title: 'Wallet', description: 'Balance and wallet history: every credit (top-ups, refunds) and debit (purchases).' },
   {
-    route: '/dashboard/wallet/fund', group: 'wallet', title: 'Add money',
+    route: '/dashboard/wallet/fund', group: 'wallet', title: 'Add money', inChat: true,
     description: 'Top up the wallet with Paystack. Shows the funding fee for the amount before paying.',
     params: { amount: 'whole naira amount to add', method: 'card | transfer | ussd (only card is live)' },
   },
 
   // ── Purchases (user still confirms and enters their PIN) ─────────────────
   {
-    route: '/dashboard/buy/airtime', group: 'purchases', title: 'Buy airtime',
+    route: '/dashboard/buy/airtime', group: 'purchases', title: 'Buy airtime', inChat: true,
     description: 'Airtime top-up for MTN, Airtel, Glo, 9mobile. Minimum ₦100.',
     params: { network: 'network name exactly as in the catalog', phone: '11-digit Nigerian number', amount: 'whole naira amount' },
   },
   {
-    route: '/dashboard/buy/data', group: 'purchases', title: 'Buy data',
+    route: '/dashboard/buy/data', group: 'purchases', title: 'Buy data', inChat: true,
     description: 'Data bundles by network and plan type (SME, GIFTING, CORPORATE).',
     params: { network: 'network name', phone: '11-digit number', planId: 'data plan id from the catalog', planType: 'SME | GIFTING | CORPORATE' },
   },
   {
-    route: '/dashboard/buy/cable', group: 'purchases', title: 'Cable TV',
+    route: '/dashboard/buy/cable', group: 'purchases', title: 'Cable TV', inChat: true,
     description: 'DStv, GOtv, Startimes subscriptions. Verifies the smartcard/IUC number first.',
     params: { provider: 'cable provider name', smartcard: 'smartcard / IUC number', planId: 'cable plan id from the catalog' },
   },
   {
-    route: '/dashboard/buy/electricity', group: 'purchases', title: 'Electricity',
+    route: '/dashboard/buy/electricity', group: 'purchases', title: 'Electricity', inChat: true,
     description: 'Prepaid or postpaid meter payment for a disco. Verifies the meter first; prepaid returns a token.',
     params: { disco: 'disco name', meterType: 'prepaid | postpaid', meter: 'meter number', amount: 'whole naira amount' },
   },
   {
-    route: '/dashboard/buy/exam', group: 'purchases', title: 'Exam pins',
+    route: '/dashboard/buy/exam', group: 'purchases', title: 'Exam pins', inChat: true,
     description: 'WAEC, NECO, NABTEB result-checker pins.',
     params: { provider: 'exam name', quantity: 'number of pins, 1-10' },
   },
   {
-    route: '/dashboard/buy/betting', group: 'purchases', title: 'Betting wallet',
+    route: '/dashboard/buy/betting', group: 'purchases', title: 'Betting wallet', inChat: true,
     description: 'Fund a betting account by user ID.',
     params: { provider: 'betting provider name', userId: 'betting account user id', amount: 'whole naira amount' },
   },
@@ -100,7 +104,7 @@ function resolve(path) {
 
 // Compact text block for the system prompt.
 function describe(enabledGroups = GROUPS) {
-  return ROUTES.filter((r) => enabledGroups.includes(r.group)).map((r) => {
+  return ROUTES.filter((r) => !r.inChat && enabledGroups.includes(r.group)).map((r) => {
     const params = r.params ? ` | query: ${Object.entries(r.params).map(([k, v]) => `${k} (${v})`).join(', ')}` : '';
     return `- ${r.route} — ${r.title}: ${r.description}${params}`;
   }).join('\n');

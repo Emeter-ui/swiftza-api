@@ -1,4 +1,5 @@
 const { finance } = require('./finance');
+const referrals = require('./referrals');
 const { getProvider } = require('../providers');
 const { validationFailed } = require('./errors');
 const { SUCCESS, FAILED, PENDING } = require('../providers/contract');
@@ -122,6 +123,9 @@ async function execute({
   if (enriched.status === SUCCESS) {
     await finance.settle({ transref });
     await safeRecord({ uid, transref, transType, amount, result: enriched });
+    // A referred customer's first qualifying purchase pays the referral reward.
+    // Never throws, so it cannot affect this purchase.
+    await referrals.onPurchaseSuccess(uid, amount);
     return {
       status: 'success',
       msg: enriched.message,

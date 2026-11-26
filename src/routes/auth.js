@@ -7,6 +7,7 @@ const { validationFailed, AppError } = require('../models/errors');
 const users = require('../repositories/users');
 const { notify } = require('../models/notifications');
 const P = require('../presenters');
+const referrals = require('../models/referrals');
 
 // The user object comes from this request's own sign-in, never from the shared
 // `auth.currentUser`, which a concurrent request may have replaced. The account
@@ -159,7 +160,7 @@ router.post(
 router.post(
   '/google',
   asyncHandler(async (req, res) => {
-    const { idToken } = req.body;
+    const { idToken, referral } = req.body;
     if (!idToken) throw validationFailed('idToken is required');
 
     let decoded;
@@ -173,6 +174,8 @@ router.post(
     const { uid, email, name } = decoded;
     let user = await users.findByUid(uid);
     if (!user) {
+      // A bad code never blocks a Google sign-up; it is just not applied.
+      const referrer = await referrals.resolveForSignup(referral, { quiet: true });
       await users.create(uid, {
         email,
         fullname: name || '',
@@ -181,7 +184,9 @@ router.post(
         account: 'USER',
         balance: 0,
         bonusBalance: 0,
+        ...(referrer ? { referredBy: referrer.uid, referredWithCode: referrer.code } : {}),
       });
+      await referrals.announceJoin(referrer, { fullname: name });
       user = await users.findByUid(uid);
     }
 

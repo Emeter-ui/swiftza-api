@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const funding = require('../models/funding');
+const guestOrders = require('../models/guest-orders');
 const { paystack } = require('../config/env');
 
 // Paystack signs the exact bytes it sent. The previous version hashed
@@ -50,6 +51,12 @@ router.post('/', async (req, res) => {
 
     if (!transref || !Number.isFinite(amount) || amount <= 0) {
       console.error('[webhook] malformed charge event', { transref, amount });
+      return;
+    }
+
+    // Guest quick-buy orders are paid for directly, not credited to a wallet.
+    if (guestOrders.isGuestReference(transref)) {
+      await guestOrders.fulfil(transref, event.data, 'webhook');
       return;
     }
 

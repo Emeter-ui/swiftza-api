@@ -116,7 +116,7 @@ const transaction = (d) => ({
 // colour and sign from `type` alone: a mode the consumer's own whitelist did not
 // know about used to render a credit as a red negative amount while the balance
 // went up. Adding a mode here is now the single edit that keeps consumers correct.
-const CREDIT_MODES = ['credit', 'credit-reversal', 'admin-credit', 'atc-credit'];
+const CREDIT_MODES = ['credit', 'credit-reversal', 'admin-credit', 'atc-credit', 'referral-credit'];
 
 const walletEntry = (d) => ({
   id: d.docid,

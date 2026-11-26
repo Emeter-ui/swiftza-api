@@ -51,6 +51,18 @@ function optionalAuth(req, res, next) {
   next();
 }
 
+// For endpoints open to signed-out visitors (the public Swiftza AI). No
+// Authorization header: req.user is null. A header that is present but
+// expired or forged is still rejected, so the client signs out properly
+// instead of silently chatting as a visitor while it thinks it is signed in.
+function sessionIfPresent(req, res, next) {
+  if (!readToken(req)) {
+    req.user = null;
+    return next();
+  }
+  return requireAuth(req, res, next);
+}
+
 function requireAuth(req, res, next) {
   try {
     req.user = verify(req);
@@ -97,6 +109,7 @@ module.exports = {
   requireAuth,
   requireAdmin,
   optionalAuth,
+  sessionIfPresent,
   bindUid,
   authed,
 };

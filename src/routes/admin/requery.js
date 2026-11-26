@@ -3,6 +3,8 @@ const router = express.Router();
 const base = require('../../repositories/base');
 const { collection } = require('../../services/mongo');
 const { finance } = require('../../models/finance');
+const guestOrders = require('../../models/guest-orders');
+const logger = require('../../services/logger');
 const providers = require('../../providers');
 const { PENDING, SERVICES } = require('../../providers/contract');
 const { asyncHandler } = require('../../middleware');
@@ -131,6 +133,11 @@ router.put(
         reason: result.reason,
       });
     }
+
+    // A held guest order follows the ruling: delivered, or refunded to the card.
+    // Never fails the ruling itself, which has already been recorded.
+    await guestOrders.afterRequery(req.params.transref, result.status).catch((err) =>
+      logger.error({ transref: req.params.transref, err: err.message }, 'guest order follow-up after requery failed'));
 
     res.json({ status: result.status });
   })

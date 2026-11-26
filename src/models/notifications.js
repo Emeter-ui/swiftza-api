@@ -25,6 +25,7 @@ function fromWallet(row) {
     'admin-credit': ['Wallet credited', `${amount} was added to your wallet.`, 'credit'],
     'admin-debit': ['Wallet debited', `${amount} was removed from your wallet.`, 'debit'],
     'atc-credit': ['Airtime to cash paid', `${amount} was added to your wallet.`, 'credit'],
+    'referral-credit': ['Referral reward', `${amount} referral reward was added to your wallet.`, 'reward'],
     'credit-reversal': ['Payment refunded', `Your ${amount} ${what} payment failed and was refunded.`, 'refund'],
   }[row.mode];
   let entry = text;

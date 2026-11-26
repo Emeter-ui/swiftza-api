@@ -34,7 +34,7 @@ function validate(patch, current) {
   };
   const bool = (k) => { if (patch[k] !== undefined) next[k] = patch[k] === true; };
 
-  bool('enabled'); bool('allowActions'); bool('useGeminiFallback');
+  bool('enabled'); bool('allowActions'); bool('useGeminiFallback'); bool('guestEnabled'); bool('guestQuickBuyEnabled');
   str('assistantName', 40, { required: true });
   str('greeting', 400, { required: true });
   str('openrouterModel', 120, { required: true });
@@ -43,6 +43,7 @@ function validate(patch, current) {
   str('supportContact', 200);
   str('maintenanceMessage', 300);
   str('extraInstructions', 4000);
+  str('guestGreeting', 400, { required: true });
   num('temperature', 0, 1.5, { int: false });
   num('maxOutputTokens', 100, 4000);
   num('requestTimeoutMs', 5000, 60000);
@@ -50,6 +51,11 @@ function validate(patch, current) {
   num('transactionsInContext', 5, 100);
   num('maxMessageChars', 100, 4000);
   num('rateLimitPerHour', 0, 1000);
+  num('lowBalanceThreshold', 0, 100000);
+  num('guestRateLimitPerHour', 0, 200);
+  num('guestIpRateLimitPerHour', 0, 5000);
+  num('guestMaxOrder', 100, 1000000);
+  num('guestDailyLimitPerEmail', 100, 5000000);
 
   if (patch.primaryProvider !== undefined) {
     if (!PROVIDERS.includes(patch.primaryProvider)) bad('primaryProvider', 'Choose openrouter or gemini');
@@ -70,6 +76,11 @@ function validate(patch, current) {
     const list = (Array.isArray(patch.suggestions) ? patch.suggestions : []).map((s) => String(s).trim()).filter(Boolean);
     if (list.length > 6 || list.some((s) => s.length > 80)) bad('suggestions', 'Up to 6 suggestions, 80 characters each');
     else next.suggestions = list;
+  }
+  if (patch.guestSuggestions !== undefined) {
+    const list = (Array.isArray(patch.guestSuggestions) ? patch.guestSuggestions : []).map((s) => String(s).trim()).filter(Boolean);
+    if (list.length > 6 || list.some((s) => s.length > 80)) bad('guestSuggestions', 'Up to 6 suggestions, 80 characters each');
+    else next.guestSuggestions = list;
   }
   if (patch.faqs !== undefined) {
     if (!Array.isArray(patch.faqs)) bad('faqs', 'Must be a list');
